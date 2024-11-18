@@ -1,0 +1,6 @@
+a.out
+main.c
+test.txt
+.DS_Store
+*.o
+Makefile
