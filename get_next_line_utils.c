@@ -6,7 +6,7 @@
 /*   By: mbenomar <mbenomar@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/18 14:36:11 by mbenomar          #+#    #+#             */
-/*   Updated: 2024/11/18 16:14:49 by mbenomar         ###   ########.fr       */
+/*   Updated: 2024/11/19 14:46:25 by mbenomar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,8 +61,6 @@ char *ft_strjoin(char *s1, char *s2)
     str[0] = '\0';
     ft_strlcat(str, s1, total + 1);
     ft_strlcat(str, s2, total + 1);
-    free(s1);
-    free(s2);
     return (str);
 }
 
