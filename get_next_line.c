@@ -6,60 +6,98 @@
 /*   By: mbenomar <mbenomar@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/18 14:36:14 by mbenomar          #+#    #+#             */
-/*   Updated: 2024/11/19 16:42:58 by mbenomar         ###   ########.fr       */
+/*   Updated: 2024/11/24 11:43:46 by mbenomar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
 
-char *get_next_line(int fd)
+static char	*ft_strchr(char *s, int c)
 {
-    static char *remainder;
-    char *buffer;
-    char *line;
-    char *tmp;
-    int bytes;
-    int new_line_index;
+	unsigned int	i;
+	char			cc;
 
-    if (fd < 0 || BUFFER_SIZE <= 0)
-        return (NULL);
-    buffer = malloc(BUFFER_SIZE + 1);
-    if (!buffer)
-        return (NULL);
-    buffer[BUFFER_SIZE] = '\0';
-    if (read(fd, buffer, BUFFER_SIZE) <= 0)
-        return (free(buffer), NULL);
-    line = remainder ? ft_strdup(remainder) : ft_strdup("");
-    free(remainder);
-    remainder = NULL;
-    while ((new_line_index = ft_strchr(line, '\n')) == -1)
-    {
-        bytes = read(fd, buffer, BUFFER_SIZE);
-        printf(" bytes : %d\n", bytes);
-        if (bytes <= 0)
-        {
-            free(line);
-            if (bytes == 0 && *buffer)
-                return (buffer);
-            return (NULL);
-        }
-        else
-            buffer[bytes] = '\0';
-        printf("buffer : %s\n", buffer);
-        printf("line before join : %s\n", line);
+	cc = (char)c;
+	i = 0;
+	while (s[i])
+	{
+		if (s[i] == cc)
+			return ((char *)&s[i]);
+		i++;
+	}
+	if (s[i] == cc)
+		return ((char *)&s[i]);
+	return (NULL);
+}
 
-        tmp = line;
-        printf("tmp : %s\n", tmp);
-        line = ft_strjoin(tmp, buffer);
-        printf("line after join : %s\n", line);
-        free(tmp);
-        if (!line)
-            return (free(buffer), NULL);
-        printf("line after after join : %s\n", line);
-        printf("index : %d\n", new_line_index);
-        printf("-------------------------------\n");
-    }
-    free(buffer);
-    remainder = ft_substr(line, new_line_index + 1, ft_strlen(line) - new_line_index + 1);
-    return (ft_substr(line, 0, new_line_index + 1));
+static char	*_fill_line_buffer(int fd, char *remainder, char *buffer)
+{
+	ssize_t	b_read;
+	char	*tmp;
+
+	b_read = 1;
+	while (b_read > 0)
+	{
+		b_read = read(fd, buffer, BUFFER_SIZE);
+		if (b_read == -1)
+			return (free(remainder), NULL);
+		else if (b_read == 0)
+			break ;
+		buffer[b_read] = 0;
+		if (!remainder)
+			remainder = ft_strdup("");
+		tmp = remainder;
+		remainder = ft_strjoin(tmp, buffer);
+		free(tmp);
+		tmp = NULL;
+		if (ft_strchr(buffer, '\n'))
+			break ;
+	}
+	return (remainder);
+}
+
+static char	*get_remainder(char *line_buffer)
+{
+	char	*remainder;
+	int		i;
+
+	i = 0;
+	while (line_buffer[i] != '\n' && line_buffer[i] != '\0')
+		i++;
+	if (line_buffer[i] == 0 || line_buffer[1] == 0)
+		return (NULL);
+	remainder = ft_substr(line_buffer, i + 1, ft_strlen(line_buffer) - i);
+	if (*remainder == 0)
+	{
+		free(remainder);
+		remainder = NULL;
+	}
+	line_buffer[i + 1] = 0;
+	return (remainder);
+}
+
+char	*get_next_line(int fd)
+{
+	static char	*remainder;
+	char		*line;
+	char		*buffer;
+
+	buffer = malloc(BUFFER_SIZE + 1);
+	if (fd < 0 || BUFFER_SIZE <= 0 || read(fd, 0, 0) < 0)
+	{
+		free(remainder);
+		free(buffer);
+		remainder = NULL;
+		buffer = NULL;
+		return (NULL);
+	}
+	if (!buffer)
+		return (NULL);
+	line = _fill_line_buffer(fd, remainder, buffer);
+	free(buffer);
+	buffer = NULL;
+	if (!line)
+		return (NULL);
+	remainder = get_remainder(line);
+	return (line);
 }
