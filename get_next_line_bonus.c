@@ -6,16 +6,16 @@
 /*   By: mbenomar <mbenomar@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/20 14:17:20 by mbenomar          #+#    #+#             */
-/*   Updated: 2024/12/21 10:05:56 by mbenomar         ###   ########.fr       */
+/*   Updated: 2024/12/21 10:23:45 by mbenomar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line_bonus.h"
 
-char *ft_read_file(int fd, char *dumpstr)
+char	*ft_read_file(int fd, char *dumpstr)
 {
-	int bytes_read;
-	char *buffer;
+	int		bytes_read;
+	char	*buffer;
 
 	if (!dumpstr)
 		dumpstr = ft_strdup("");
@@ -28,21 +28,21 @@ char *ft_read_file(int fd, char *dumpstr)
 		bytes_read = read(fd, buffer, BUFFER_SIZE);
 		if (bytes_read == -1)
 			return (free(buffer), buffer = NULL, free(dumpstr), dumpstr = NULL,
-					NULL);
+				NULL);
 		buffer[bytes_read] = '\0';
 		dumpstr = ft_strjoin(dumpstr, buffer);
 		if (!dumpstr)
 			return (free(buffer), buffer = NULL, NULL);
 		if (ft_strchr(dumpstr, '\n'))
-			break;
+			break ;
 	}
 	return (free(buffer), buffer = NULL, dumpstr);
 }
 
-char *ft_get_line(char *dumpstr)
+char	*ft_get_line(char *dumpstr)
 {
-	char *line;
-	int i;
+	char	*line;
+	int		i;
 
 	i = 0;
 	if (!dumpstr || !dumpstr[0])
@@ -66,11 +66,11 @@ char *ft_get_line(char *dumpstr)
 	return (line);
 }
 
-char *ft_recycle_dumpstr(char *dumpstr)
+char	*ft_recycle_dumpstr(char *dumpstr)
 {
-	char *new_dumpstr;
-	int i;
-	int j;
+	char	*new_dumpstr;
+	int		i;
+	int		j;
 
 	i = 0;
 	while (dumpstr[i] && dumpstr[i] != '\n')
@@ -88,10 +88,10 @@ char *ft_recycle_dumpstr(char *dumpstr)
 	return (free(dumpstr), dumpstr = NULL, new_dumpstr);
 }
 
-char *get_next_line(int fd)
+char	*get_next_line(int fd)
 {
-	static char *dumpstr[OPEN_MAX];
-	char *line;
+	static char	*dumpstr[OPEN_MAX];
+	char		*line;
 
 	if (fd < 0 || BUFFER_SIZE < 1 || read(fd, 0, 0) < 0)
 		return (free(dumpstr[fd]), dumpstr[fd] = NULL, NULL);
