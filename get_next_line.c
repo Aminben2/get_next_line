@@ -6,13 +6,13 @@
 /*   By: mbenomar <mbenomar@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/12 13:17:50 by mbenomar          #+#    #+#             */
-/*   Updated: 2024/12/21 10:26:26 by mbenomar         ###   ########.fr       */
+/*   Updated: 2024/12/24 09:25:47 by mbenomar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
 
-char	*ft_read_file(int fd, char *dumpstr)
+char	*ft_get_buffersize(int fd, char *dumpstr)
 {
 	int		bytes_read;
 	char	*buffer;
@@ -66,7 +66,7 @@ char	*ft_get_line(char *dumpstr)
 	return (line);
 }
 
-char	*ft_recycle_dumpstr(char *dumpstr)
+char	*ft_get_next_remainder(char *dumpstr)
 {
 	char	*new_dumpstr;
 	int		i;
@@ -95,12 +95,12 @@ char	*get_next_line(int fd)
 
 	if (fd < 0 || BUFFER_SIZE < 1 || read(fd, 0, 0) < 0)
 		return (free(dumpstr), dumpstr = NULL, NULL);
-	dumpstr = ft_read_file(fd, dumpstr);
+	dumpstr = ft_get_buffersize(fd, dumpstr);
 	if (!dumpstr)
 		return (free(dumpstr), dumpstr = NULL, NULL);
 	line = ft_get_line(dumpstr);
 	if (!line)
 		return (free(dumpstr), dumpstr = NULL, NULL);
-	dumpstr = ft_recycle_dumpstr(dumpstr);
+	dumpstr = ft_get_next_remainder(dumpstr);
 	return (line);
 }

@@ -6,13 +6,13 @@
 /*   By: mbenomar <mbenomar@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/20 14:17:20 by mbenomar          #+#    #+#             */
-/*   Updated: 2024/12/21 10:23:45 by mbenomar         ###   ########.fr       */
+/*   Updated: 2024/12/24 09:24:27 by mbenomar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line_bonus.h"
 
-char	*ft_read_file(int fd, char *dumpstr)
+char	*ft_get_buffersize(int fd, char *dumpstr)
 {
 	int		bytes_read;
 	char	*buffer;
@@ -66,7 +66,7 @@ char	*ft_get_line(char *dumpstr)
 	return (line);
 }
 
-char	*ft_recycle_dumpstr(char *dumpstr)
+char	*ft_get_next_remainder(char *dumpstr)
 {
 	char	*new_dumpstr;
 	int		i;
@@ -95,12 +95,12 @@ char	*get_next_line(int fd)
 
 	if (fd < 0 || BUFFER_SIZE < 1 || read(fd, 0, 0) < 0)
 		return (free(dumpstr[fd]), dumpstr[fd] = NULL, NULL);
-	dumpstr[fd] = ft_read_file(fd, dumpstr[fd]);
+	dumpstr[fd] = ft_get_buffersize(fd, dumpstr[fd]);
 	if (!dumpstr[fd])
 		return (free(dumpstr[fd]), dumpstr[fd] = NULL, NULL);
 	line = ft_get_line(dumpstr[fd]);
 	if (!line)
 		return (free(dumpstr[fd]), dumpstr[fd] = NULL, NULL);
-	dumpstr[fd] = ft_recycle_dumpstr(dumpstr[fd]);
+	dumpstr[fd] = ft_get_next_remainder(dumpstr[fd]);
 	return (line);
 }
